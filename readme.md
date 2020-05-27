@@ -1,6 +1,6 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/uwidcit/info2602ps.git) 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/dkkcharles/info2602ps.git) 
 
-[![Run on Repl.it](https://repl.it/badge/github/uwidcit/info2602ps)](https://repl.it/github/uwidcit/info2602ps)
+[![Run on Repl.it](https://repl.it/badge/github/dkkcharles/info2602ps)](https://repl.it/github/dkkcharles/info2602ps)
 
 # Before you start
 Create a heroku account by following this [link](https://signup.heroku.com/login)
