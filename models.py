@@ -41,7 +41,7 @@ class Post(db.Model):
                 j=j+1
         return j
     
-    def getTotalDislikes():
+    def getTotalDislikes(self):
         j=0
         for react in self.reacts:
             if react.react == 'Dislike':

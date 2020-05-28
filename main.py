@@ -38,21 +38,47 @@ app.app_context().push()
 @app.route('/') #Reference lab 6 task 4
 def index():
     form = LogIn()
-  if form.validate_on_submit(): 
-    data = request.form
-    user = User.query.filter_by(username = data['username']).first()
-    if user and user.check_password(data['password']): 
-      flash('Logged in successfully.') 
-      login_user(user) 
-      return redirect(url_for('app')) 
-    else:
-      flash('Invalid username or password') 
-      return redirect(url_for('index')) 
-  return render_template('index.html', form=form)
+    if form.validate_on_submit():
+        data = request.form
+        user = User.query.filter_by(username = data['username']).first()
+        if user and user.check_password(data['password']): 
+            flash('Logged in successfully.') 
+            login_user(user) 
+            return redirect(url_for('app')) 
+        else:
+            flash('Invalid username or password') 
+            return redirect(url_for('index'))
+    return render_template('index.html', form=form)
 
-@app.route('/app') #Reference lab 6 task 5
+@app.route('/app', methods=['GET', 'POST', 'DELETE']) #Reference lab 6 task 5
+@login_required
 def client_app():
-  return app.send_static_file('app.html')
+    posts = Post.query.all()
+    posts = [Post.toDict() for post in posts]
+    if posts is None:
+        posts = []
+
+    #return json.dumps(posts)
+    form = AddPost()
+    if form.validate_on_submit():
+        data = request.form
+        post = Post(text=data[''], id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Post Added!')
+        return redirect(url_for('app'))
+
+     
+    return render_template('app.html',form=form,posts=posts)
+
+    
+def delete_todo(id):
+  todo = Todo.query.filter_by(userid=current_identity.id, id=id).first()
+  if todo == None:
+    return 'Invalid id or unauthorized'
+  db.session.delete(todo) # delete the object
+  db.session.commit()
+  return 'Deleted', 204
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=8080, debug=True)
