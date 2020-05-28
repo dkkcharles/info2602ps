@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 import datetime
 
@@ -26,31 +27,37 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-class UserReact(db.Model):
-    id = db.Column('id', db.Integer, db.ForeignKey('user.id'))
-    postid = db.Column('postid', db.Integer, db.ForeignKey('post.postid'))
-    react = db.Column(db.String('like'|'dislike')
-
 
 class Post(db.Model):
     postid = db.Column(db.Integer, primary_key =True)
-    id = db.Column(db.Integer, db.ForeignKey('user.id'),)
-    text = db.column(db.String(280), nullable=False)
+    id = db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+    text = db.Column(db.String(280), nullable=False)
     reacts = db.relationship('UserReact')
 
-    def getTotalLikes():
-        return{
-            total
-        }
+    def getTotalLikes(self):
+        j=0
+        for react in self.reacts:
+            if react.react == 'Like':
+                j=j+1
+        return j
     
     def getTotalDislikes():
-        return{
-            total
-        }
+        j=0
+        for react in self.reacts:
+            if react.react == 'Dislike':
+                j=j+1
+        return j
 
     def toDict(self):
         return{
+            "Text" : self.text,
             "User" : self.user.username,
-            "Likes" : self.getTotalLikes,
-            "Dislikes" : self.getTotalDislikes
+            "Likes" : self.getTotalLikes(),
+            "Dislikes" : self.getTotalDislikes()
         }
+
+class UserReact(db.Model):
+    urid = db.Column(db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, db.ForeignKey('user.id'))
+    postid = db.Column('postid', db.Integer, db.ForeignKey('post.postid'))
+    react = db.Column(db.String(7))

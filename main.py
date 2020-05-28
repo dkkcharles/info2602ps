@@ -6,15 +6,16 @@ from flask_jwt import JWT, jwt_required, current_identity
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta 
 
-from models import db, Logs #add application models
+from models import db, User, Post, UserReact 
+from forms import LogIn, AddPost
 
 ''' Begin boilerplate code '''
 
 ''' Begin Flask Login Functions '''
-# login_manager = LoginManager()
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(user_id)
+login_manager = LoginManager()
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 ''' End Flask Login Functions '''
 
@@ -23,9 +24,8 @@ def create_app():
   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
   app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
   app.config['SECRET_KEY'] = "MYSECRET"
-#   app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 7) # uncomment if using flsk jwt
   CORS(app)
-#   login_manager.init_app(app) # uncomment if using flask login
+  login_manager.init_app(app) 
   db.init_app(app)
   return app
 
@@ -35,22 +35,22 @@ app.app_context().push()
 
 ''' End Boilerplate Code '''
 
-''' Set up JWT here (if using flask JWT)'''
-# def authenticate(uname, password):
-#   pass
-
-# #Payload is a dictionary which is passed to the function by Flask JWT
-# def identity(payload):
-#   pass
-
-# jwt = JWT(app, authenticate, identity)
-''' End JWT Setup '''
-
-@app.route('/')
+@app.route('/') #Reference lab 6 task 4
 def index():
-  return render_template('app.html')
+    form = LogIn()
+  if form.validate_on_submit(): 
+    data = request.form
+    user = User.query.filter_by(username = data['username']).first()
+    if user and user.check_password(data['password']): 
+      flash('Logged in successfully.') 
+      login_user(user) 
+      return redirect(url_for('app')) 
+    else:
+      flash('Invalid username or password') 
+      return redirect(url_for('index')) 
+  return render_template('index.html', form=form)
 
-@app.route('/app')
+@app.route('/app') #Reference lab 6 task 5
 def client_app():
   return app.send_static_file('app.html')
 

@@ -1,10 +1,30 @@
 {% extends "layout.html" %}
-{% block title %}Backend App{% endblock %}
-{% block page %}Backend App{% endblock %}
+{% block title %}Home{% endblock %}
+{% block page %}Welcome {{ current_user.username }}{% endblock %}
 
 {{ super() }}
 
 {% block content %}
-    <h1>This view is partially rendered on the server using jinja</h1>
-    <h2>It must be dynamically served</h2>
+    {% if current_user.is_authenticated %}
+  <div class="container">
+    <div class="row">
+      <form class="col s12 m8 offset-m2 card-panel" method="POST" action="/app">
+            
+            {{ form.csrf_token }}
+
+            <div class="input-field col s12 m8 offset-m2"> 
+              {{ form.text(size=200, class="validate materialize-textarea") }}
+              {{ form.text.label }}
+            </div>
+
+            <div class="input-field col s12 m8 offset-m2">
+              {{form.submit}}
+            </div> 
+        </form>
+    </div>
+  </div>
+        
+  </div>
+
+  {% endif %}
 {% endblock %}
